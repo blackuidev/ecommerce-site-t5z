@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ShoeIcon, StarIcon, MessageSquareIcon } from 'lucide-react';
+import { Shirt, StarIcon, MessageSquareIcon } from 'lucide-react';
 
 const HomePage = () => {
   const fadeInAnimation = {
