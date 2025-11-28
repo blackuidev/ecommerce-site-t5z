@@ -31,7 +31,38 @@ const cartItems: CartItem[] = [
 ];
 
 const CartPage: React.FC = () => {
+  // Placeholder for cart items. In a real app, this would come from a context, Redux store, or an API.
+  const [cartItems, setCartItems] = React.useState<CartItem[]>([
+    {
+      id: '1',
+      name: 'Running Shoe',
+      price: 89.99,
+      quantity: 2,
+      image: 'https://images.unsplash.com/photo-1542296635-0645d259b620?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cnVubmluZyUyMHNob2V8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60',
+    },
+    {
+      id: '2',
+      name: 'Basketball Shoe',
+      price: 129.99,
+      quantity: 1,
+      image: 'https://images.unsplash.com/photo-1606107557195-0e29a4b586aa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8c2hvZXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60',
+    },
+  ]);
+
   const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+  const handleQuantityChange = (itemId: string, newQuantity: number) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === itemId ? { ...item, quantity: Math.max(1, newQuantity) } : item
+      )
+    );
+  };
+
+  const handleRemoveItem = (itemId: string) => {
+    setCartItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
+  };
+
 
   const itemVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -44,7 +75,9 @@ const CartPage: React.FC = () => {
       className="container mx-auto p-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      exit={{ opacity: 0, height: 0, marginTop: 0, marginBottom: 0, paddingBottom: 0, paddingTop: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+
       transition={{ duration: 0.5 }}
     >
       <Card className="w-full max-w-4xl mx-auto bg-white/5 backdrop-blur-md border-white/10">
@@ -78,15 +111,22 @@ const CartPage: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center border border-white/20 rounded-md">
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button variant="ghost" size="icon" className="h-8 w-8"
+                        onClick={() => handleQuantityChange(item.id, item.quantity - 1)}>
+
                         -
                       </Button>
                       <span className="px-2">{item.quantity}</span>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+
+                      <Button variant="ghost" size="icon" className="h-8 w-8"
+                        onClick={() => handleQuantityChange(item.id, item.quantity + 1)}>
+
                         +
                       </Button>
                     </div>
-                    <Button variant="destructive" size="icon" className="h-8 w-8">
+                    <Button variant="destructive" size="icon" className="h-8 w-8"
+                        onClick={() => handleRemoveItem(item.id)}>
+
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>

@@ -40,21 +40,59 @@ const fetchProduct = async (productId: string): Promise<Product | null> => {
     rating: 4.5,
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1, y: 0,
+      transition: { duration: 0.5 }
+    }
+  };
+
+  const imageVariants = {
+    hidden: { x: -50, opacity: 0 },
+    visible: {
+      x: 0, opacity: 1,
+      transition: { duration: 0.5, delay: 0.2 }
+    }
+  };
+
+  const detailsVariants = {
+    hidden: { x: 50, opacity: 0 },
+    visible: {
+      x: 0, opacity: 1,
+      transition: { duration: 0.5, delay: 0.2 }
+    }
+  };
+
   return dummyProduct;
 };
+
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ProductDetails = () => {
   const { productId } = useParams();
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (productId) {
-      fetchProduct(productId).then((data) => {
-        setProduct(data);
-      });
-    }
+    const loadProduct = async () => {
+      setIsLoading(true);
+      if (productId) {
+        try {
+          const data = await fetchProduct(productId);
+          setProduct(data);
+        } catch (error) {
+          console.error("Failed to fetch product:", error);
+          // Handle error appropriately, e.g., show an error message
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadProduct();
   }, [productId]);
 
   const handleAddToCart = () => {
@@ -67,8 +105,30 @@ const ProductDetails = () => {
     toast.success(`${quantity} x ${product?.name} (Size ${selectedSize}) added to cart!`);
   };
 
+  if (isLoading) {
+    return (
+      <motion.div
+        className="container mx-auto p-8 flex flex-col md:flex-row gap-8"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
+        <div className="md:w-1/2">
+          <Skeleton className="w-full h-[400px]" />
+        </div>
+        <div className="md:w-1/2 flex flex-col gap-4">
+          <Skeleton className="h-8 w-3/4" />
+          <Skeleton className="h-6 w-1/2" />
+          <Skeleton className="h-24" />
+          <Skeleton className="h-10 w-1/4" />
+          <Skeleton className="h-10 w-1/2" />
+        </div>
+      </motion.div>
+    );
+  }
+
   if (!product) {
-    return <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-center items-center h-screen">Loading...</motion.div>;
+    return <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-center items-center h-screen">Product Not Found</motion.div>;
   }
 
   return (
@@ -77,11 +137,12 @@ const ProductDetails = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
+    variants={containerVariants}
     >
-      <div className="md:w-1/2">
+      <motion.div className="md:w-1/2" variants={imageVariants}>
         <Carousel images={product.images} />
-      </div>
-      <div className="md:w-1/2 flex flex-col gap-4">
+      </motion.div>
+      <motion.div className="md:w-1/2 flex flex-col gap-4" variants={detailsVariants}>
         <h1 className="text-2xl font-bold">{product.name}</h1>
         <div className="flex items-center gap-2">
           <Star className="text-yellow-500" size={20} />
@@ -127,6 +188,6 @@ const ProductDetails = () => {
       </div>
     </motion.div>
   );
-};
+}
 
 export default ProductDetails;

@@ -21,7 +21,7 @@ function AppContent() {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
       <AnimatePresence mode='wait' initial={false}>
-        <Routes key={location.pathname} location={location}>
+        <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Index />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

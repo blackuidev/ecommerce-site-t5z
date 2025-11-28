@@ -11,6 +11,34 @@
     width: 6px;
 }
 
+.dark .sidebar-scrollable::-webkit-scrollbar-track {
+    background-color: #333;
+    border-radius: 10px;
+}
+
+.sidebar-scrollable::-webkit-scrollbar-track {
+    background-color: #f9f8f6;
+    border-radius: 10px;
+}
+
+.dark .sidebar-scrollable::-webkit-scrollbar-thumb {
+    background-color: #999;
+    border-radius: 10px;
+}
+
+.sidebar-scrollable::-webkit-scrollbar-thumb {
+    background-color: #666;
+    border-radius: 10px;
+}
+
+.dark .sidebar-scrollable::-webkit-scrollbar-thumb:hover {
+    background-color: #ccc;
+}
+
+.sidebar-scrollable::-webkit-scrollbar-thumb:hover {
+    width: 6px;
+}
+
 .sidebar-scrollable::-webkit-scrollbar-track {
     background-color: #f9f8f6;
     border-radius: 10px;
